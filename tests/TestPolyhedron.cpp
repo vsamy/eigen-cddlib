@@ -16,11 +16,14 @@
 // <http://www.gnu.org/licenses/>.
 
 #define BOOST_TEST_MODULE TestPolyhedron
+#include <iostream>
+#include <chrono>
 #include <Eigen/Core>
 #include <boost/test/floating_point_comparison.hpp>
 #include <boost/test/unit_test.hpp>
 
 #include "Polyhedron.h"
+
 
 struct Rep {
     Rep()
@@ -71,8 +74,15 @@ struct Rep {
 
 BOOST_FIXTURE_TEST_CASE(Vrep2Hrep, Rep)
 {
+    auto t_start = std::chrono::high_resolution_clock::now();
+    
     Eigen::Polyhedron polyhedron;
     BOOST_REQUIRE(polyhedron.vrep(mat1Vrep));
+    
+    auto t_end = std::chrono::high_resolution_clock::now();    
+    std::cout << "Wall time: " << std::chrono::duration<double, std::milli>(t_end - t_start).count() << "ms" << std::endl;
+
+
     Eigen::MatrixXd matHrep = polyhedron.hrep();
     BOOST_CHECK(matHrep.isApprox(mat1Hrep));
     Eigen::MatrixXd matVrep = polyhedron.vrep();

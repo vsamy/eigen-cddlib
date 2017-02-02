@@ -21,52 +21,29 @@
 #include <boost/test/unit_test.hpp>
 #include <chrono>
 #include <iostream>
+#include <utility>
 
 #include "Polyhedron.h"
 
 struct Rep {
     Rep()
-        : mat1Vrep(5, 4)
-        , mat1Hrep(5, 4)
-        , mat2Vrep(4, 4)
-        , mat2Hrep(4, 4)
-        , AVrep(5, 3)
+        : AVrep(4, 3)
         , AHrep(4, 3)
-        , bVrep(5)
+        , bVrep(4)
         , bHrep(4)
     {
-        mat1Vrep << 0, 0.5, 0.5, 1,
-            0, 0.5, -0.5, 1,
-            0, -0.5, 0.5, 1,
-            0, -0.5, -0.5, 1,
-            1, 0, 0, 0;
-        mat1Hrep << 0, 2, 0, 1,
-            0, 0, 2, 1,
-            0, -2, 0, 1,
-            0, 0, -2, 1,
-            1, 0, 0, 0;
-        mat2Vrep << 0, 1, 1, 2,
-            0, 1, -1, 2,
-            0, -1, -1, 2,
-            0, -1, 1, 2;
-        mat2Hrep << 0, 2, 0, 1,
-            0, 0, 2, 1,
-            0, -2, 0, 1,
-            0, 0, -2, 1;
-        AVrep << 0.5, 0.5, 1,
-            0.5, -0.5, 1,
-            -0.5, 0.5, 1,
-            -0.5, -0.5, 1,
-            0, 0, 0;
+        AVrep << 1, 1, 2,
+            1, -1, 2,
+            -1, -1, 2,
+            -1, 1, 2; // Friction cone inequality * 2
         AHrep << -2, 0, -1,
             0, -2, -1,
             2, 0, -1,
             0, 2, -1;
-        bVrep << 0, 0, 0, 0, 1;
+        bVrep << 0, 0, 0, 0;
         bHrep << 0, 0, 0, 0;
     }
 
-    Eigen::MatrixXd mat1Vrep, mat1Hrep, mat2Vrep, mat2Hrep;
     Eigen::MatrixXd AVrep, AHrep;
     Eigen::VectorXd bVrep, bHrep;
 };
@@ -74,48 +51,43 @@ struct Rep {
 BOOST_FIXTURE_TEST_CASE(Vrep2Hrep, Rep)
 {
     auto t_start = std::chrono::high_resolution_clock::now();
-
-    Eigen::Polyhedron polyhedron;
-    BOOST_REQUIRE(polyhedron.hrep(mat1Vrep));
-
+    Eigen::Polyhedron poly(AVrep, bVrep, true);
+    auto hrep = poly.hrep();
+    BOOST_CHECK(AHrep.isApprox(hrep.first));
+    BOOST_CHECK(bHrep.isApprox(hrep.second));
     auto t_end = std::chrono::high_resolution_clock::now();
     std::cout << "Wall time: " << std::chrono::duration<double, std::milli>(t_end - t_start).count() << "ms" << std::endl;
 
-    Eigen::MatrixXd matHrep = polyhedron.hrep();
-    BOOST_CHECK(matHrep.isApprox(mat1Hrep));
-    Eigen::MatrixXd matVrep = polyhedron.vrep();
-    BOOST_CHECK(matVrep.isApprox(mat1Vrep));
-
-    Eigen::Polyhedron poly(AVrep, bVrep, true);
-    Eigen::MatrixXd mat = poly.hrep();
-    BOOST_CHECK(matHrep.isApprox(mat));
-
+    t_start = std::chrono::high_resolution_clock::now();
     Eigen::Polyhedron poly2;
     poly2.hrep(AVrep, bVrep);
-    mat = poly2.hrep();
-    BOOST_CHECK(matHrep.isApprox(mat));
+    hrep = poly2.hrep();
+    BOOST_CHECK(AHrep.isApprox(hrep.first));
+    BOOST_CHECK(bHrep.isApprox(hrep.second));
+    t_end = std::chrono::high_resolution_clock::now();
+    std::cout << "Wall time: " << std::chrono::duration<double, std::milli>(t_end - t_start).count() << "ms" << std::endl;
 
-    polyhedron.printHrep();
+    poly2.printHrep();
 }
 
 BOOST_FIXTURE_TEST_CASE(Hrep2Vrep, Rep)
 {
-    Eigen::Polyhedron polyhedron(mat2Hrep, false);
-
-    Eigen::MatrixXd matVrep = polyhedron.vrep();
-    BOOST_CHECK(matVrep.isApprox(mat2Vrep));
-    Eigen::MatrixXd matHrep = polyhedron.hrep();
-    BOOST_CHECK(matHrep.isApprox(mat2Hrep));
-
+    auto t_start = std::chrono::high_resolution_clock::now();
     Eigen::Polyhedron poly(AHrep, bHrep, false);
-    Eigen::MatrixXd mat = poly.vrep();
-    poly.printVrep();
-    BOOST_CHECK(matVrep.isApprox(mat));
+    auto vrep = poly.vrep();
+    BOOST_CHECK(AVrep.isApprox(vrep.first));
+    BOOST_CHECK(bVrep.isApprox(vrep.second));
+    auto t_end = std::chrono::high_resolution_clock::now();
+    std::cout << "Wall time: " << std::chrono::duration<double, std::milli>(t_end - t_start).count() << "ms" << std::endl;
 
+    t_start = std::chrono::high_resolution_clock::now();
     Eigen::Polyhedron poly2;
     poly2.vrep(AHrep, bHrep);
-    mat = poly2.vrep();
-    BOOST_CHECK(matVrep.isApprox(mat));
+    vrep = poly2.vrep();
+    BOOST_CHECK(AVrep.isApprox(vrep.first));
+    BOOST_CHECK(bVrep.isApprox(vrep.second));
+    t_end = std::chrono::high_resolution_clock::now();
+    std::cout << "Wall time: " << std::chrono::duration<double, std::milli>(t_end - t_start).count() << "ms" << std::endl;
 
-    polyhedron.printVrep();
+    poly2.printVrep();
 }

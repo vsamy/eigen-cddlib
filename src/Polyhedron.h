@@ -20,6 +20,7 @@
 #include <Eigen/Core>
 #include <cdd/setoper.h> // Must be included before cdd.h (wtf)
 #include <cdd/cdd.h>
+#include <utility>
 
 namespace Eigen {
 
@@ -31,13 +32,6 @@ class Polyhedron {
 public:
     /* Default constructor that set cdd global constants. */
     Polyhedron();
-    /* Constructor to call with already known matrix.
-     * Compute its dual representation.
-     * \param matrix The representation of the polyhedron.
-     * \param isVrep true is the matrix is a V-representation of a polyhedron.
-     * \throw std::runtime_error if the matrix couldn't compute the dual representation.
-     */
-    Polyhedron(const Eigen::MatrixXd& matrix, bool isVrep);
     /* Constructor to call with already known matrix.
      * Compute its dual representation.
      * H-polyhedron is such that \f$ Ax \leq b \f$.
@@ -53,22 +47,12 @@ public:
     /* Free the pointers and unset the cdd global constants. */
     ~Polyhedron();
 
-    /* Treat the matrix as a H-representation and compute its V-representation.
-     * \param matrix The H-representation of the polyhedron.
-     * \return true if the V-representation has been computed succefully.
-     */
-    bool vrep(const Eigen::MatrixXd& matrix);
     /* Treat the inputs as a H-representation and compute its V-representation.
      * \param A The matrix part of the representation of the polyhedron.
      * \param b The vector part of the representation of the polyhedron.
      * \return true if the V-representation has been computed succefully.
      */
     bool vrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b);
-    /* Treat the matrix as a V-representation and compute its H-representation
-     * \param matrix The V-representation of the polyhedron.
-     * \return true if the H-representation has been computed succefully
-     */
-    bool hrep(const Eigen::MatrixXd& matrix);
     /* Treat the inputs as a V-representation and compute its H-representation
      * \param A The matrix part of the representation of the polyhedron.
      * \param b The vector part of the representation of the polyhedron.
@@ -76,13 +60,17 @@ public:
      */
     bool hrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b);
     /* Get the V-representation of the polyhedron
-     * \return Eigen matrix of the V-representation
+     * V-polyhedron is such that \f$ A = [v^T r^T]^T, b=[1^T 0^T]^T \f$
+     * with A composed of \f$ v \f$, the vertices, \f$ r \f$, the rays
+     * and b is a vector which is 1 for vertices and 0 for rays.
+     * \return Pair of vertices and rays matrix and identification vector of vertices and rays for the V-representation
      */
-    Eigen::MatrixXd vrep();
+    std::pair<Eigen::MatrixXd, Eigen::VectorXd> vrep();
     /* Get the H-representation of the polyhedron
-     * \return Eigen matrix of the H-representation
+     * H-polyhedron is such that \f$ Ax \leq b \f$.
+     * \return Pair of inequality matrix and inequality vector for the H-representation
      */
-    Eigen::MatrixXd hrep();
+    std::pair<Eigen::MatrixXd, Eigen::VectorXd> hrep();
 
     /* Print the H-representation of the polyhedron */
     void printHrep();
@@ -90,10 +78,11 @@ public:
     void printVrep();
 
 private:
+    bool hvrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b);
     void initializeMatrixPtr(std::size_t rows, std::size_t cols);
     bool doubleDescription(const Eigen::MatrixXd& matrix);
     Eigen::MatrixXd concatenateMatrix(const Eigen::MatrixXd& A, const Eigen::VectorXd& b);
-    Eigen::MatrixXd ddfMatrix2EigenMatrix(dd_MatrixPtr mat);
+    std::pair<Eigen::MatrixXd, Eigen::VectorXd> ddfMatrix2EigenMatrix(dd_MatrixPtr mat);
 
 private:
     bool isFromGenerators_;

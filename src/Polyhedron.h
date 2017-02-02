@@ -18,7 +18,7 @@
 #pragma once
 
 #include <Eigen/Core>
-#include <cdd/setoper.h>
+#include <cdd/setoper.h> // Must be included before cdd.h (wtf)
 #include <cdd/cdd.h>
 
 namespace Eigen {
@@ -53,26 +53,26 @@ public:
     /* Free the pointers and unset the cdd global constants. */
     ~Polyhedron();
 
-    /* Treat the matrix as a V-representation and compute its H-representation.
-     * \param matrix The V-representation of the polyhedron.
-     * \return true if the H-representation has been computed succefully.
+    /* Treat the matrix as a H-representation and compute its V-representation.
+     * \param matrix The H-representation of the polyhedron.
+     * \return true if the V-representation has been computed succefully.
      */
     bool vrep(const Eigen::MatrixXd& matrix);
-    /* Treat the inputs as a V-representation and compute its H-representation.
+    /* Treat the inputs as a H-representation and compute its V-representation.
      * \param A The matrix part of the representation of the polyhedron.
      * \param b The vector part of the representation of the polyhedron.
-     * \return true if the H-representation has been computed succefully.
+     * \return true if the V-representation has been computed succefully.
      */
     bool vrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b);
-    /* Treat the matrix as a H-representation and compute its V-representation
-     * \param matrix The H-representation of the polyhedron.
-     * \return true if the V-representation has been computed succefully
+    /* Treat the matrix as a V-representation and compute its H-representation
+     * \param matrix The V-representation of the polyhedron.
+     * \return true if the H-representation has been computed succefully
      */
     bool hrep(const Eigen::MatrixXd& matrix);
-    /* Treat the inputs as a H-representation and compute its V-representation
+    /* Treat the inputs as a V-representation and compute its H-representation
      * \param A The matrix part of the representation of the polyhedron.
      * \param b The vector part of the representation of the polyhedron.
-     * \return true if the V-representation has been computed succefully
+     * \return true if the H-representation has been computed succefully
      */
     bool hrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b);
     /* Get the V-representation of the polyhedron

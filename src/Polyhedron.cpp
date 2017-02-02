@@ -33,7 +33,7 @@ Polyhedron::Polyhedron(const Eigen::MatrixXd& matrix, bool isVrep)
 {
     dd_set_global_constants();
 
-    bool success = (isFromGenerators_ ? vrep(matrix) : hrep(matrix));
+    bool success = (isFromGenerators_ ? hrep(matrix) : vrep(matrix));
     if (!success)
         throw std::runtime_error("The polytope could not be generated properly.");
 }
@@ -45,7 +45,7 @@ Polyhedron::Polyhedron(const Eigen::MatrixXd& A, const Eigen::VectorXd& b, bool 
 {
     dd_set_global_constants();
 
-    bool success = (isFromGenerators_ ? vrep(A, b) : hrep(A, b));
+    bool success = (isFromGenerators_ ? hrep(A, b) : vrep(A, b));
     if (!success)
         throw std::runtime_error("The polytope could not be generated properly.");
 }
@@ -61,27 +61,27 @@ Polyhedron::~Polyhedron()
 
 bool Polyhedron::vrep(const Eigen::MatrixXd& matrix)
 {
-    isFromGenerators_ = true;
+    isFromGenerators_ = false;
     initializeMatrixPtr(matrix.rows(), matrix.cols());
     return doubleDescription(matrix);
 }
 
 bool Polyhedron::vrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b)
 {
-    isFromGenerators_ = true;
+    isFromGenerators_ = false;
     return vrep(concatenateMatrix(A, b));
 }
 
 bool Polyhedron::hrep(const Eigen::MatrixXd& matrix)
 {
-    isFromGenerators_ = false;
+    isFromGenerators_ = true;
     initializeMatrixPtr(matrix.rows(), matrix.cols());
     return doubleDescription(matrix);
 }
 
 bool Polyhedron::hrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b)
 {
-    isFromGenerators_ = false;
+    isFromGenerators_ = true;
     return hrep(concatenateMatrix(A, b));
 }
 

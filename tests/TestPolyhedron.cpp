@@ -51,43 +51,25 @@ struct Rep {
 BOOST_FIXTURE_TEST_CASE(Vrep2Hrep, Rep)
 {
     auto t_start = std::chrono::high_resolution_clock::now();
-    Eigen::Polyhedron poly(AVrep, bVrep, true);
-    auto hrep = poly.hrep();
+    Eigen::Polyhedron poly;
+    auto hrep = poly.hrep(AVrep, bVrep);
     BOOST_CHECK(AHrep.isApprox(hrep.first));
     BOOST_CHECK(bHrep.isApprox(hrep.second));
     auto t_end = std::chrono::high_resolution_clock::now();
     std::cout << "Wall time: " << std::chrono::duration<double, std::milli>(t_end - t_start).count() << "ms" << std::endl;
 
-    t_start = std::chrono::high_resolution_clock::now();
-    Eigen::Polyhedron poly2;
-    poly2.hrep(AVrep, bVrep);
-    hrep = poly2.hrep();
-    BOOST_CHECK(AHrep.isApprox(hrep.first));
-    BOOST_CHECK(bHrep.isApprox(hrep.second));
-    t_end = std::chrono::high_resolution_clock::now();
-    std::cout << "Wall time: " << std::chrono::duration<double, std::milli>(t_end - t_start).count() << "ms" << std::endl;
-
-    poly2.printHrep();
+    poly.printHrep();
 }
 
 BOOST_FIXTURE_TEST_CASE(Hrep2Vrep, Rep)
 {
     auto t_start = std::chrono::high_resolution_clock::now();
-    Eigen::Polyhedron poly(AHrep, bHrep, false);
-    auto vrep = poly.vrep();
+    Eigen::Polyhedron poly;
+    auto vrep = poly.vrep(AHrep, bHrep);
     BOOST_CHECK(AVrep.isApprox(vrep.first));
     BOOST_CHECK(bVrep.isApprox(vrep.second));
     auto t_end = std::chrono::high_resolution_clock::now();
     std::cout << "Wall time: " << std::chrono::duration<double, std::milli>(t_end - t_start).count() << "ms" << std::endl;
 
-    t_start = std::chrono::high_resolution_clock::now();
-    Eigen::Polyhedron poly2;
-    poly2.vrep(AHrep, bHrep);
-    vrep = poly2.vrep();
-    BOOST_CHECK(AVrep.isApprox(vrep.first));
-    BOOST_CHECK(bVrep.isApprox(vrep.second));
-    t_end = std::chrono::high_resolution_clock::now();
-    std::cout << "Wall time: " << std::chrono::duration<double, std::milli>(t_end - t_start).count() << "ms" << std::endl;
-
-    poly2.printVrep();
+    poly.printVrep();
 }

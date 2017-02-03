@@ -32,33 +32,25 @@ class Polyhedron {
 public:
     /* Default constructor that set cdd global constants. */
     Polyhedron();
-    /* Constructor to call with already known matrix.
-     * Compute its dual representation.
+    /* Free the pointers and unset the cdd global constants. */
+    ~Polyhedron();
+
+    /* Treat the inputs as a H-representation and compute its V-representation.
      * H-polyhedron is such that \f$ Ax \leq b \f$.
+     * \param A The matrix part of the representation of the polyhedron.
+     * \param b The vector part of the representation of the polyhedron.
+     * \return The V-representation of the polyhedron.
+     */
+    std::pair<Eigen::MatrixXd, Eigen::VectorXd> vrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b);
+    /* Treat the inputs as a V-representation and compute its H-representation
      * V-polyhedron is such that \f$ A = [v^T r^T]^T, b=[1^T 0^T]^T \f$
      * with A composed of \f$ v \f$, the vertices, \f$ r \f$, the rays
      * and b is a vector which is 1 for vertices and 0 for rays.
      * \param A The matrix part of the representation of the polyhedron.
      * \param b The vector part of the representation of the polyhedron.
-     * \param isVrep true is the matrix is a V-representation of a polyhedron.
-     * \throw std::runtime_error if the matrix couldn't compute the dual representation.
+     * \return The H-representation of the polyhedron.
      */
-    Polyhedron(const Eigen::MatrixXd& A, const Eigen::VectorXd& b, bool isVrep);
-    /* Free the pointers and unset the cdd global constants. */
-    ~Polyhedron();
-
-    /* Treat the inputs as a H-representation and compute its V-representation.
-     * \param A The matrix part of the representation of the polyhedron.
-     * \param b The vector part of the representation of the polyhedron.
-     * \return true if the V-representation has been computed succefully.
-     */
-    bool vrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b);
-    /* Treat the inputs as a V-representation and compute its H-representation
-     * \param A The matrix part of the representation of the polyhedron.
-     * \param b The vector part of the representation of the polyhedron.
-     * \return true if the H-representation has been computed succefully
-     */
-    bool hrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b);
+    std::pair<Eigen::MatrixXd, Eigen::VectorXd> hrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b);
     /* Get the V-representation of the polyhedron
      * V-polyhedron is such that \f$ A = [v^T r^T]^T, b=[1^T 0^T]^T \f$
      * with A composed of \f$ v \f$, the vertices, \f$ r \f$, the rays
@@ -79,7 +71,7 @@ public:
 
 private:
     bool hvrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b);
-    void initializeMatrixPtr(std::size_t rows, std::size_t cols);
+    void initializeMatrixPtr(Eigen::Index rows, Eigen::Index cols);
     bool doubleDescription(const Eigen::MatrixXd& matrix);
     Eigen::MatrixXd concatenateMatrix(const Eigen::MatrixXd& A, const Eigen::VectorXd& b);
     std::pair<Eigen::MatrixXd, Eigen::VectorXd> ddfMatrix2EigenMatrix(dd_MatrixPtr mat);

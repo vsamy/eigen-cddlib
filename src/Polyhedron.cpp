@@ -26,17 +26,6 @@ Polyhedron::Polyhedron()
     dd_set_global_constants();
 }
 
-Polyhedron::Polyhedron(const Eigen::MatrixXd& A, const Eigen::VectorXd& b, bool isVrep)
-    : matPtr_(nullptr)
-    , polytope_(nullptr)
-{
-    dd_set_global_constants();
-
-    bool success = (isVrep ? hrep(A, b) : vrep(A, b));
-    if (!success)
-        throw std::runtime_error("The polytope could not be generated properly.");
-}
-
 Polyhedron::~Polyhedron()
 {
     if (matPtr_ != nullptr)
@@ -46,16 +35,21 @@ Polyhedron::~Polyhedron()
     dd_free_global_constants();
 }
 
-bool Polyhedron::vrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b)
+std::pair<Eigen::MatrixXd, Eigen::VectorXd> Polyhedron::vrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b)
 {
     isFromGenerators_ = false;
-    return hvrep(A, b);
+    if (!hvrep(A, b))
+        throw std::runtime_error("Bad conversion from hrep to vrep.");
+
+    return vrep();
 }
 
-bool Polyhedron::hrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b)
+std::pair<Eigen::MatrixXd, Eigen::VectorXd> Polyhedron::hrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b)
 {
     isFromGenerators_ = true;
-    return hvrep(A, b);
+    if (!hvrep(A, b))
+        throw std::runtime_error("Bad conversion from vrep to hrep.");
+    return hrep();
 }
 
 std::pair<Eigen::MatrixXd, Eigen::VectorXd> Polyhedron::vrep()
@@ -92,7 +86,7 @@ bool Polyhedron::hvrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b)
     return doubleDescription(cMat);
 }
 
-void Polyhedron::initializeMatrixPtr(std::size_t rows, std::size_t cols)
+void Polyhedron::initializeMatrixPtr(Eigen::Index rows, Eigen::Index cols)
 {
     if (matPtr_ != nullptr)
         dd_FreeMatrix(matPtr_);

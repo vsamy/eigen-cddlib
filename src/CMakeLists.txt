@@ -12,7 +12,7 @@ endif()
 
 include_directories(${CDDLIB_HEADER})
 add_library(${PROJECT_NAME} SHARED ${SOURCES} ${HEADERS})
-target_link_libraries(${PROJECT_NAME} ${libcdd_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${CDDLIB_LIB})
 
 set(INSTALL_PATH include/${PROJECT_NAME})
 install(FILES ${HEADERS} DESTINATION ${INSTALL_PATH})

@@ -1,5 +1,5 @@
 set(SOURCES Polyhedron.cpp)
-set(HEADERS Polyhedron.h)
+set(HEADERS Polyhedron.h typedefs.h)
 
 find_path(CDDLIB_HEADER cdd.h HINTS /usr/include/cdd)
 if(${CDDLIB_HEADER} STREQUAL "CDDLIB_HEADER-NOTFOUND")

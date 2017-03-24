@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include "typedefs.h"
 #include <Eigen/Core>
 #include <cdd/setoper.h> // Must be included before cdd.h (wtf)
 #include <cdd/cdd.h>

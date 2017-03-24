@@ -23,6 +23,11 @@ endif()
 
 SEARCH_FOR_EIGEN()
 
+if(${_Eigen_VERSION} VERSION_LESS 3.3)
+  message("Version of Eigen: " ${_Eigen_VERSION})
+  add_definitions(-DEIGEN_3_2_FOUND)
+endif()
+
 add_subdirectory(src)
 add_subdirectory(tests)
 

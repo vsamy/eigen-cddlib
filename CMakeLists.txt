@@ -23,8 +23,10 @@ endif()
 
 SEARCH_FOR_EIGEN()
 
+if(${_Eigen_VERSION} VERSION_LESS 3.2)
+  message(FATAL_ERROR "Version of Eigen is inferior to 3.2: " ${_Eigen_VERSION})
+endif()
 if(${_Eigen_VERSION} VERSION_LESS 3.3)
-  message("Version of Eigen: " ${_Eigen_VERSION})
   add_definitions(-DEIGEN_3_2_FOUND)
 endif()
 

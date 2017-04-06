@@ -37,8 +37,7 @@ Polyhedron::~Polyhedron()
 
 std::pair<Eigen::MatrixXd, Eigen::VectorXd> Polyhedron::vrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b)
 {
-    isFromGenerators_ = false;
-    if (!hvrep(A, b))
+    if (!hvrep(A, b, false))
         throw std::runtime_error("Bad conversion from hrep to vrep.");
 
     return vrep();
@@ -46,8 +45,7 @@ std::pair<Eigen::MatrixXd, Eigen::VectorXd> Polyhedron::vrep(const Eigen::Matrix
 
 std::pair<Eigen::MatrixXd, Eigen::VectorXd> Polyhedron::hrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b)
 {
-    isFromGenerators_ = true;
-    if (!hvrep(A, b))
+    if (!hvrep(A, b, true))
         throw std::runtime_error("Bad conversion from vrep to hrep.");
     return hrep();
 }
@@ -55,13 +53,13 @@ std::pair<Eigen::MatrixXd, Eigen::VectorXd> Polyhedron::hrep(const Eigen::Matrix
 std::pair<Eigen::MatrixXd, Eigen::VectorXd> Polyhedron::vrep()
 {
     dd_MatrixPtr mat = dd_CopyGenerators(polytope_);
-    return ddfMatrix2EigenMatrix(mat);
+    return ddfMatrix2EigenMatrix(mat, false);
 }
 
 std::pair<Eigen::MatrixXd, Eigen::VectorXd> Polyhedron::hrep()
 {
     dd_MatrixPtr mat = dd_CopyInequalities(polytope_);
-    return ddfMatrix2EigenMatrix(mat);
+    return ddfMatrix2EigenMatrix(mat, true);
 }
 
 void Polyhedron::printVrep()
@@ -80,23 +78,23 @@ void Polyhedron::printHrep()
  * Private functions
  */
 
-bool Polyhedron::hvrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b)
+bool Polyhedron::hvrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b, bool isFromGenerators)
 {
-    Eigen::MatrixXd cMat = concatenateMatrix(A, b);
-    return doubleDescription(cMat);
+    Eigen::MatrixXd cMat = concatenateMatrix(A, b, isFromGenerators);
+    return doubleDescription(cMat, isFromGenerators);
 }
 
-void Polyhedron::initializeMatrixPtr(Eigen::Index rows, Eigen::Index cols)
+void Polyhedron::initializeMatrixPtr(Eigen::Index rows, Eigen::Index cols, bool isFromGenerators)
 {
     if (matPtr_ != nullptr)
         dd_FreeMatrix(matPtr_);
     matPtr_ = dd_CreateMatrix(rows, cols);
-    matPtr_->representation = (isFromGenerators_ ? dd_Generator : dd_Inequality);
+    matPtr_->representation = (isFromGenerators ? dd_Generator : dd_Inequality);
 }
 
-bool Polyhedron::doubleDescription(const Eigen::MatrixXd& matrix)
+bool Polyhedron::doubleDescription(const Eigen::MatrixXd& matrix, bool isFromGenerators)
 {
-    initializeMatrixPtr(matrix.rows(), matrix.cols());
+    initializeMatrixPtr(matrix.rows(), matrix.cols(), isFromGenerators);
 
     for (auto row = 0; row < matrix.rows(); ++row)
         for (auto col = 0; col < matrix.cols(); ++col)
@@ -108,18 +106,18 @@ bool Polyhedron::doubleDescription(const Eigen::MatrixXd& matrix)
     return (err_ == dd_NoError) ? true : false;
 }
 
-Eigen::MatrixXd Polyhedron::concatenateMatrix(const Eigen::MatrixXd& A, const Eigen::VectorXd& b)
+Eigen::MatrixXd Polyhedron::concatenateMatrix(const Eigen::MatrixXd& A, const Eigen::VectorXd& b, bool isFromGenerators)
 {
-    double sign = (isFromGenerators_ ? 1 : -1);
+    double sign = (isFromGenerators ? 1 : -1);
     Eigen::MatrixXd mat(A.rows(), A.cols() + 1);
     mat.col(0) = b;
     mat.block(0, 1, A.rows(), A.cols()).noalias() = sign * A;
     return mat;
 }
 
-std::pair<Eigen::MatrixXd, Eigen::VectorXd> Polyhedron::ddfMatrix2EigenMatrix(dd_MatrixPtr mat)
+std::pair<Eigen::MatrixXd, Eigen::VectorXd> Polyhedron::ddfMatrix2EigenMatrix(dd_MatrixPtr mat, bool isFromGenerators)
 {
-    double sign = (isFromGenerators_ ? -1 : 1);
+    double sign = (isFromGenerators ? -1 : 1);
     auto rows = mat->rowsize;
     auto cols = mat->colsize;
     Eigen::MatrixXd mOut(rows, cols - 1);

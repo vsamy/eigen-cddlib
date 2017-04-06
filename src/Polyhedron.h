@@ -71,14 +71,13 @@ public:
     void printVrep();
 
 private:
-    bool hvrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b);
-    void initializeMatrixPtr(Eigen::Index rows, Eigen::Index cols);
-    bool doubleDescription(const Eigen::MatrixXd& matrix);
-    Eigen::MatrixXd concatenateMatrix(const Eigen::MatrixXd& A, const Eigen::VectorXd& b);
-    std::pair<Eigen::MatrixXd, Eigen::VectorXd> ddfMatrix2EigenMatrix(dd_MatrixPtr mat);
+    bool hvrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b, bool isFromGenerators);
+    void initializeMatrixPtr(Eigen::Index rows, Eigen::Index cols, bool isFromGenerators);
+    bool doubleDescription(const Eigen::MatrixXd& matrix, bool isFromGenerators);
+    Eigen::MatrixXd concatenateMatrix(const Eigen::MatrixXd& A, const Eigen::VectorXd& b, bool isFromGenerators);
+    std::pair<Eigen::MatrixXd, Eigen::VectorXd> ddfMatrix2EigenMatrix(dd_MatrixPtr mat, bool isFromGenerators);
 
 private:
-    bool isFromGenerators_;
     dd_MatrixPtr matPtr_;
     dd_PolyhedraPtr polytope_;
     dd_ErrorType err_;

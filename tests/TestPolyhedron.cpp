@@ -52,7 +52,8 @@ BOOST_FIXTURE_TEST_CASE(Vrep2Hrep, Rep)
 {
     auto t_start = std::chrono::high_resolution_clock::now();
     Eigen::Polyhedron poly;
-    auto hrep = poly.hrep(AVrep, bVrep);
+    poly.hrep(AVrep, bVrep);
+    auto hrep = poly.hrep();
     BOOST_CHECK(AHrep.isApprox(hrep.first));
     BOOST_CHECK(bHrep.isApprox(hrep.second));
     auto t_end = std::chrono::high_resolution_clock::now();
@@ -65,7 +66,8 @@ BOOST_FIXTURE_TEST_CASE(Hrep2Vrep, Rep)
 {
     auto t_start = std::chrono::high_resolution_clock::now();
     Eigen::Polyhedron poly;
-    auto vrep = poly.vrep(AHrep, bHrep);
+    poly.vrep(AHrep, bHrep);
+    auto vrep = poly.vrep();
     BOOST_CHECK(AVrep.isApprox(vrep.first));
     BOOST_CHECK(bVrep.isApprox(vrep.second));
     auto t_end = std::chrono::high_resolution_clock::now();

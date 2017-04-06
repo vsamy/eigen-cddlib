@@ -40,18 +40,16 @@ public:
      * H-polyhedron is such that \f$ Ax \leq b \f$.
      * \param A The matrix part of the representation of the polyhedron.
      * \param b The vector part of the representation of the polyhedron.
-     * \return The V-representation of the polyhedron.
      */
-    std::pair<Eigen::MatrixXd, Eigen::VectorXd> vrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b);
+    void vrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b);
     /* Treat the inputs as a V-representation and compute its H-representation
      * V-polyhedron is such that \f$ A = [v^T r^T]^T, b=[1^T 0^T]^T \f$
      * with A composed of \f$ v \f$, the vertices, \f$ r \f$, the rays
      * and b is a vector which is 1 for vertices and 0 for rays.
      * \param A The matrix part of the representation of the polyhedron.
      * \param b The vector part of the representation of the polyhedron.
-     * \return The H-representation of the polyhedron.
      */
-    std::pair<Eigen::MatrixXd, Eigen::VectorXd> hrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b);
+    void hrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b);
     /* Get the V-representation of the polyhedron
      * V-polyhedron is such that \f$ A = [v^T r^T]^T, b=[1^T 0^T]^T \f$
      * with A composed of \f$ v \f$, the vertices, \f$ r \f$, the rays
@@ -75,7 +73,7 @@ private:
     void initializeMatrixPtr(Eigen::Index rows, Eigen::Index cols, bool isFromGenerators);
     bool doubleDescription(const Eigen::MatrixXd& matrix, bool isFromGenerators);
     Eigen::MatrixXd concatenateMatrix(const Eigen::MatrixXd& A, const Eigen::VectorXd& b, bool isFromGenerators);
-    std::pair<Eigen::MatrixXd, Eigen::VectorXd> ddfMatrix2EigenMatrix(dd_MatrixPtr mat, bool isFromGenerators);
+    std::pair<Eigen::MatrixXd, Eigen::VectorXd> ddfMatrix2EigenMatrix(dd_MatrixPtr mat, bool isOuputVRep);
 
 private:
     dd_MatrixPtr matPtr_;

@@ -21,16 +21,17 @@ if(UNIX)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
 endif()
 
+set(Eigen_REQUIRED "eigen3 >= 3.2")
 SEARCH_FOR_EIGEN()
 
-if(${_Eigen_VERSION} VERSION_LESS 3.2)
-  message(FATAL_ERROR "Version of Eigen is inferior to 3.2: " ${_Eigen_VERSION})
-endif()
 if(${_Eigen_VERSION} VERSION_LESS 3.3)
   add_definitions(-DEIGEN_3_2_FOUND)
 endif()
 
 add_subdirectory(src)
 add_subdirectory(tests)
+
+# Add dependency towards the library in the pkg-config file.
+pkg_config_append_libs(${PROJECT_NAME})
 
 setup_project_finalize()

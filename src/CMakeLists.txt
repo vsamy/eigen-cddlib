@@ -1,7 +1,7 @@
 set(SOURCES Polyhedron.cpp)
 set(HEADERS Polyhedron.h typedefs.h)
 
-find_path(CDDLIB_HEADER cdd.h HINTS /usr/include/cdd)
+find_path(CDDLIB_HEADER cdd.h HINTS /usr/include/cdd PATHS ENV PATH PATH_SUFFIXES ../include/cdd)
 if(${CDDLIB_HEADER} STREQUAL "CDDLIB_HEADER-NOTFOUND")
     message(FATAL_ERROR "cdd headers have not been found !!!")
 endif()

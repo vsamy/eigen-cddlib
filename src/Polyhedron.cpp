@@ -16,7 +16,6 @@
 // <http://www.gnu.org/licenses/>.
 
 #include "Polyhedron.h"
-#include <iostream>
 
 namespace Eigen {
 
@@ -29,7 +28,6 @@ Polyhedron::Polyhedron()
     if (counter == 0)
         dd_set_global_constants();
     counter++;
-    std::cout << counter << std::endl;
 }
 
 Polyhedron::~Polyhedron()
@@ -43,7 +41,6 @@ Polyhedron::~Polyhedron()
 
     if (counter == 0)
         dd_free_global_constants();
-    std::cout << counter << std::endl;
 }
 
 void Polyhedron::vrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b)

@@ -16,23 +16,34 @@
 // <http://www.gnu.org/licenses/>.
 
 #include "Polyhedron.h"
+#include <iostream>
 
 namespace Eigen {
+
+int Polyhedron::counter = 0;
 
 Polyhedron::Polyhedron()
     : matPtr_(nullptr)
     , polytope_(nullptr)
 {
-    dd_set_global_constants();
+    if (counter == 0)
+        dd_set_global_constants();
+    counter++;
+    std::cout << counter << std::endl;
 }
 
 Polyhedron::~Polyhedron()
 {
+    counter--;
+
     if (matPtr_ != nullptr)
         dd_FreeMatrix(matPtr_);
     if (polytope_ != nullptr)
         dd_FreePolyhedra(polytope_);
-    dd_free_global_constants();
+
+    if (counter == 0)
+        dd_free_global_constants();
+    std::cout << counter << std::endl;
 }
 
 void Polyhedron::vrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b)

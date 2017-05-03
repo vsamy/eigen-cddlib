@@ -79,6 +79,9 @@ private:
     dd_MatrixPtr matPtr_;
     dd_PolyhedraPtr polytope_;
     dd_ErrorType err_;
+
+private:
+    static int counter;
 };
 
 } // namespace Eigen

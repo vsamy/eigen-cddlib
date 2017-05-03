@@ -22,6 +22,7 @@
 #include <cdd/setoper.h> // Must be included before cdd.h (wtf)
 #include <cdd/cdd.h>
 #include <utility>
+#include <mutex>
 
 namespace Eigen {
 
@@ -82,6 +83,7 @@ private:
 
 private:
     static int counter;
+    static std::mutex mtx;
 };
 
 } // namespace Eigen

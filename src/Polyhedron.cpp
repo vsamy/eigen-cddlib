@@ -20,6 +20,7 @@
 namespace Eigen {
 
 int Polyhedron::counter = 0;
+std::mutex Polyhedron::mtx;
 
 Polyhedron::Polyhedron()
     : matPtr_(nullptr)
@@ -107,6 +108,8 @@ bool Polyhedron::doubleDescription(const Eigen::MatrixXd& matrix, bool isFromGen
 
     if (polytope_ != nullptr)
         dd_FreePolyhedra(polytope_);
+
+    std::unique_lock<std::mutex> lock(mtx);
     polytope_ = dd_DDMatrix2Poly(matPtr_, &err_);
     return (err_ == dd_NoError) ? true : false;
 }

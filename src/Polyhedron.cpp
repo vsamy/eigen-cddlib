@@ -56,25 +56,25 @@ void Polyhedron::hrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b)
         throw std::runtime_error("Bad conversion from vrep to hrep.");
 }
 
-std::pair<Eigen::MatrixXd, Eigen::VectorXd> Polyhedron::vrep()
+std::pair<Eigen::MatrixXd, Eigen::VectorXd> Polyhedron::vrep() const
 {
     dd_MatrixPtr mat = dd_CopyGenerators(polytope_);
     return ddfMatrix2EigenMatrix(mat, true);
 }
 
-std::pair<Eigen::MatrixXd, Eigen::VectorXd> Polyhedron::hrep()
+std::pair<Eigen::MatrixXd, Eigen::VectorXd> Polyhedron::hrep() const
 {
     dd_MatrixPtr mat = dd_CopyInequalities(polytope_);
     return ddfMatrix2EigenMatrix(mat, false);
 }
 
-void Polyhedron::printVrep()
+void Polyhedron::printVrep() const
 {
     dd_MatrixPtr mat = dd_CopyGenerators(polytope_);
     dd_WriteMatrix(stdout, mat);
 }
 
-void Polyhedron::printHrep()
+void Polyhedron::printHrep() const
 {
     dd_MatrixPtr mat = dd_CopyInequalities(polytope_);
     dd_WriteMatrix(stdout, mat);
@@ -123,7 +123,7 @@ Eigen::MatrixXd Polyhedron::concatenateMatrix(const Eigen::MatrixXd& A, const Ei
     return mat;
 }
 
-std::pair<Eigen::MatrixXd, Eigen::VectorXd> Polyhedron::ddfMatrix2EigenMatrix(dd_MatrixPtr mat, bool isOuputVRep)
+std::pair<Eigen::MatrixXd, Eigen::VectorXd> Polyhedron::ddfMatrix2EigenMatrix(dd_MatrixPtr mat, bool isOuputVRep) const
 {
     double sign = (isOuputVRep ? 1 : -1);
     auto rows = mat->rowsize;

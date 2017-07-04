@@ -19,10 +19,11 @@
 
 #include "typedefs.h"
 #include <Eigen/Core>
+#include <atomic>
 #include <cdd/setoper.h> // Must be included before cdd.h (wtf)
 #include <cdd/cdd.h>
-#include <utility>
 #include <mutex>
+#include <utility>
 
 namespace Eigen {
 
@@ -74,7 +75,7 @@ private:
     void initializeMatrixPtr(Eigen::Index rows, Eigen::Index cols, bool isFromGenerators);
     bool doubleDescription(const Eigen::MatrixXd& matrix, bool isFromGenerators);
     Eigen::MatrixXd concatenateMatrix(const Eigen::MatrixXd& A, const Eigen::VectorXd& b, bool isFromGenerators);
-    std::pair<Eigen::MatrixXd, Eigen::VectorXd> ddfMatrix2EigenMatrix(dd_MatrixPtr mat, bool isOuputVRep) const;
+    std::pair<Eigen::MatrixXd, Eigen::VectorXd> ddfMatrix2EigenMatrix(const dd_MatrixPtr mat, bool isOuputVRep) const;
 
 private:
     dd_MatrixPtr matPtr_;
@@ -82,7 +83,7 @@ private:
     dd_ErrorType err_;
 
 private:
-    static int counter;
+    static std::atomic_int counter;
     static std::mutex mtx;
 };
 

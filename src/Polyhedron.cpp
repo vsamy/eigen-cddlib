@@ -19,7 +19,7 @@
 
 namespace Eigen {
 
-int Polyhedron::counter = 0;
+std::atomic_int Polyhedron::counter(0);
 std::mutex Polyhedron::mtx;
 
 Polyhedron::Polyhedron()
@@ -46,36 +46,42 @@ Polyhedron::~Polyhedron()
 
 void Polyhedron::vrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b)
 {
+    std::unique_lock<std::mutex> lock(mtx);
     if (!hvrep(A, b, false))
         throw std::runtime_error("Bad conversion from hrep to vrep.");
 }
 
 void Polyhedron::hrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b)
 {
+    std::unique_lock<std::mutex> lock(mtx);
     if (!hvrep(A, b, true))
         throw std::runtime_error("Bad conversion from vrep to hrep.");
 }
 
 std::pair<Eigen::MatrixXd, Eigen::VectorXd> Polyhedron::vrep() const
 {
+    std::unique_lock<std::mutex> lock(mtx);
     dd_MatrixPtr mat = dd_CopyGenerators(polytope_);
     return ddfMatrix2EigenMatrix(mat, true);
 }
 
 std::pair<Eigen::MatrixXd, Eigen::VectorXd> Polyhedron::hrep() const
 {
+    std::unique_lock<std::mutex> lock(mtx);
     dd_MatrixPtr mat = dd_CopyInequalities(polytope_);
     return ddfMatrix2EigenMatrix(mat, false);
 }
 
 void Polyhedron::printVrep() const
 {
+    std::unique_lock<std::mutex> lock(mtx);
     dd_MatrixPtr mat = dd_CopyGenerators(polytope_);
     dd_WriteMatrix(stdout, mat);
 }
 
 void Polyhedron::printHrep() const
 {
+    std::unique_lock<std::mutex> lock(mtx);
     dd_MatrixPtr mat = dd_CopyInequalities(polytope_);
     dd_WriteMatrix(stdout, mat);
 }
@@ -94,6 +100,7 @@ void Polyhedron::initializeMatrixPtr(Eigen::Index rows, Eigen::Index cols, bool 
 {
     if (matPtr_ != nullptr)
         dd_FreeMatrix(matPtr_);
+    
     matPtr_ = dd_CreateMatrix(rows, cols);
     matPtr_->representation = (isFromGenerators ? dd_Generator : dd_Inequality);
 }
@@ -109,7 +116,6 @@ bool Polyhedron::doubleDescription(const Eigen::MatrixXd& matrix, bool isFromGen
     if (polytope_ != nullptr)
         dd_FreePolyhedra(polytope_);
 
-    std::unique_lock<std::mutex> lock(mtx);
     polytope_ = dd_DDMatrix2Poly(matPtr_, &err_);
     return (err_ == dd_NoError) ? true : false;
 }
@@ -123,7 +129,7 @@ Eigen::MatrixXd Polyhedron::concatenateMatrix(const Eigen::MatrixXd& A, const Ei
     return mat;
 }
 
-std::pair<Eigen::MatrixXd, Eigen::VectorXd> Polyhedron::ddfMatrix2EigenMatrix(dd_MatrixPtr mat, bool isOuputVRep) const
+std::pair<Eigen::MatrixXd, Eigen::VectorXd> Polyhedron::ddfMatrix2EigenMatrix(const dd_MatrixPtr mat, bool isOuputVRep) const
 {
     double sign = (isOuputVRep ? 1 : -1);
     auto rows = mat->rowsize;

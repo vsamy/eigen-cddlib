@@ -1,3 +1,7 @@
+# DEPRECATED
+
+Please refer to [eigen-ccd](https://github.com/vsamy/eigen-cdd)
+
 # eigen-cddlib
 
 eigen-cddlib is a library that wraps cdd library.

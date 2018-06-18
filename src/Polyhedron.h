@@ -73,6 +73,15 @@ public:
     /* Print the V-representation of the polyhedron */
     void printVrep() const;
 
+    /* Set the polyhedron from a matrix \f$ R = [r]^T$ of stacked ray vectors.
+     * \param R Matrix of stacked rays.
+     */
+    void setRays(const Eigen::MatrixXd& R);
+    /* Set the polyhedron from a matrix \f$ V = [v]^T$ of stacked vertices.
+     * \param V Matrix of stacked vertices.
+     */
+    void setVertices(const Eigen::MatrixXd& V);
+
 private:
     bool hvrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b, bool isFromGenerators);
     void initializeMatrixPtr(Eigen::Index rows, Eigen::Index cols, bool isFromGenerators);

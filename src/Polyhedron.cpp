@@ -86,6 +86,16 @@ void Polyhedron::printHrep() const
     dd_WriteMatrix(stdout, mat);
 }
 
+void Polyhedron::setRays(const Eigen::MatrixXd& R)
+{
+    setVrep(R, Eigen::VectorXd::Zero(R.rows()));
+}
+
+void Polyhedron::setVertices(const Eigen::MatrixXd& V)
+{
+    setVrep(V, Eigen::VectorXd::Ones(V.rows()));
+}
+
 /**
  * Private functions
  */

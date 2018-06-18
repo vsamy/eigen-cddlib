@@ -44,14 +44,14 @@ Polyhedron::~Polyhedron()
         dd_free_global_constants();
 }
 
-void Polyhedron::vrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b)
+void Polyhedron::setHrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b)
 {
     std::unique_lock<std::mutex> lock(mtx);
     if (!hvrep(A, b, false))
         throw std::runtime_error("Bad conversion from hrep to vrep.");
 }
 
-void Polyhedron::hrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b)
+void Polyhedron::setVrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b)
 {
     std::unique_lock<std::mutex> lock(mtx);
     if (!hvrep(A, b, true))

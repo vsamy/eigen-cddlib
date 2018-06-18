@@ -41,18 +41,18 @@ public:
     /* Free the pointers and unset the cdd global constants. */
     ~Polyhedron();
 
-    /* Treat the inputs as a H-representation and compute its V-representation.
-     * H-polyhedron is such that \f$ Ax \leq b \f$.
-     * \param A The matrix part of the representation of the polyhedron.
-     * \param b The vector part of the representation of the polyhedron.
+    /* Treat the inputs as an H-representation and compute its V-representation.
+     * An H-polyhedron is such that \f$ Ax \leq b \f$.
+     * \param A Matrix part of the H-representation.
+     * \param b Vector part of the H-representation.
      */
     void setHrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b);
     /* Treat the inputs as a V-representation and compute its H-representation.
      * V-polyhedron is such that \f$ A = [v r]^T, b=[1^T 0^T]^T \f$
-     * with A composed of \f$ v \f$, the vertices, \f$ r \f$, the rays
-     * and b is a vector which is 1 for vertices and 0 for rays.
-     * \param A The matrix part of the representation of the polyhedron.
-     * \param b The vector part of the representation of the polyhedron.
+     * with A composed of \f$ v \f$, the vertices, \f$ r \f$, the rays,
+     * and b is a corresponding vector with 1 for vertices and 0 for rays.
+     * \param A Matrix part of the V-representation.
+     * \param b Vector part of the V-representation.
      */
     void setVrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b);
     /* Get the V-representation of the polyhedron.
@@ -64,7 +64,7 @@ public:
     VrepXd vrep() const;
     /* Get the H-representation of the polyhedron.
      * H-polyhedron is such that \f$ Ax \leq b \f$.
-     * \return Pair of inequality matrix and inequality vector for the H-representation
+     * \return Pair of inequality matrix and inequality vector of the H-representation.
      */
     HrepXd hrep() const;
 

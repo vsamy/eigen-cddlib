@@ -74,11 +74,11 @@ public:
     void printVrep() const;
 
     /* Set the polyhedron from a matrix \f$ R = [r]^T$ of stacked ray vectors.
-     * \param R Matrix of stacked rays.
+     * \param R m x n matrix of stacked rays (each ray has dimension n).
      */
     void setRays(const Eigen::MatrixXd& R);
     /* Set the polyhedron from a matrix \f$ V = [v]^T$ of stacked vertices.
-     * \param V Matrix of stacked vertices.
+     * \param V m x n matrix of stacked vertices (each vertex has dimension n).
      */
     void setVertices(const Eigen::MatrixXd& V);
 

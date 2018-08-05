@@ -120,3 +120,22 @@ BOOST_FIXTURE_TEST_CASE(setVertices, Rep)
 
     poly.printHrep();
 }
+
+BOOST_FIXTURE_TEST_CASE(setVertices2D, Rep)
+{
+    auto t_start = std::chrono::high_resolution_clock::now();
+    Eigen::MatrixXd vertices{8, 2};
+    vertices <<
+      1.07251350992533,   0.175746163122458,
+      1.07251350992533,   0.0457461631224578,
+      0.848513509925328,  0.0457461631224578,
+      0.848513509925328,  0.175746163122458,
+      1.07251394042948,  -0.0443321701680914,
+      1.07251394042948,  -0.174332170168091,
+      0.848513940429476, -0.174332170168091,
+      0.848513940429476, -0.0443321701680914;
+    Eigen::Polyhedron poly;
+    BOOST_REQUIRE_THROW(poly.setVertices(vertices), std::runtime_error);
+    auto t_end = std::chrono::high_resolution_clock::now();
+    std::cout << "Wall time: " << std::chrono::duration<double, std::milli>(t_end - t_start).count() << "ms" << std::endl;
+}

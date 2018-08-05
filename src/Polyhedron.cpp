@@ -48,14 +48,14 @@ void Polyhedron::setHrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b)
 {
     std::unique_lock<std::mutex> lock(mtx);
     if (!hvrep(A, b, false))
-        throw std::runtime_error("Bad conversion from hrep to vrep.");
+        throw std::runtime_error("H-rep to V-rep conversion failed: " + stringFromError(err_));
 }
 
 void Polyhedron::setVrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b)
 {
     std::unique_lock<std::mutex> lock(mtx);
     if (!hvrep(A, b, true))
-        throw std::runtime_error("Bad conversion from vrep to hrep.");
+        throw std::runtime_error("V-rep to H-rep conversion failed: " + stringFromError(err_));
 }
 
 std::pair<Eigen::MatrixXd, Eigen::VectorXd> Polyhedron::vrep() const
@@ -153,6 +153,51 @@ std::pair<Eigen::MatrixXd, Eigen::VectorXd> Polyhedron::ddfMatrix2EigenMatrix(co
     }
 
     return std::make_pair(mOut, vOut);
+}
+
+std::string Polyhedron::stringFromError(dd_ErrorType err)
+{
+  switch (err)
+  {
+    case dd_CannotHandleLinearity:
+      return "dd_CannotHandleLinearity";
+    case dd_ColIndexOutOfRange:
+      return "dd_ColIndexOutOfRange";
+    case dd_DimensionTooLarge:
+      return "dd_DimensionTooLarge";
+    case dd_EmptyHrepresentation:
+      return "dd_EmptyHrepresentation";
+    case dd_EmptyRepresentation:
+      return "dd_EmptyRepresentation";
+    case dd_EmptyVrepresentation:
+      return "dd_EmptyVrepresentation";
+    case dd_IFileNotFound:
+      return "dd_IFileNotFound";
+    case dd_ImproperInputFormat:
+      return "dd_ImproperInputFormat";
+    case dd_LPCycling:
+      return "dd_LPCycling";
+    case dd_NegativeMatrixSize:
+      return "dd_NegativeMatrixSize";
+    case dd_NoError:
+      return "dd_NoError";
+    case dd_NoLPObjective:
+      return "dd_NoLPObjective";
+    case dd_NoRealNumberSupport:
+      return "dd_NoRealNumberSupport";
+    case dd_NotAvailForH:
+      return "dd_NotAvailForH";
+    case dd_NotAvailForV:
+      return "dd_NotAvailForV";
+    case dd_NumericallyInconsistent:
+      return "dd_NumericallyInconsistent";
+    case dd_OFileNotOpen:
+      return "dd_OFileNotOpen";
+    case dd_RowIndexOutOfRange:
+      return "dd_RowIndexOutOfRange";
+    default:
+      return "undefined error";
+  }
 }
 
 } // namespace Eigen

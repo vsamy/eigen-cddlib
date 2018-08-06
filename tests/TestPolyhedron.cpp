@@ -35,6 +35,9 @@ struct Rep {
         , AHrepSquare(4, 2)
         , bVrepSquare(4)
         , bHrepSquare(4)
+        , vertices2D(8, 2)
+        , AHrepVertices2D(6, 2)
+        , bHrepVertices2D(6)
     {
         AVrepCone << 1, 1, 2,
             1, -1, 2,
@@ -56,6 +59,29 @@ struct Rep {
             1, 0;
         bVrepSquare << 1, 1, 1, 1;
         bHrepSquare << 1, 1, 1, 1;
+        vertices2D <<
+          1.23574805739044, 0.157474652673044,
+          1.23574805739044, 0.0274746526730442,
+          1.01174805739044, 0.0274746526730442,
+          1.01174805739044, 0.157474652673044,
+          1.23565994710417, -0.0223938092347823,
+          1.23565994710417, -0.152393809234782,
+          1.01165994710417, -0.152393809234782,
+          1.01165994710417, -0.0223938092347823;
+        AHrepVertices2D <<
+          2041.40139990995, -1,
+          1.66519403934611e-12, -6.56194634821138,
+          -1, -0,
+          -2041.40140187324, 1,
+          7.27623780808067e-12, 6.35022832574365,
+          1, 4.08077501031036e-16;
+        bHrepVertices2D <<
+          2522.63033964017,
+          1,
+          -1.01165994710417,
+          -2065.22642804669,
+          1,
+          1.23574805739044;
     }
 
     Eigen::MatrixXd AVrepCone, AHrepCone;
@@ -63,6 +89,9 @@ struct Rep {
 
     Eigen::MatrixXd AVrepSquare, AHrepSquare;
     Eigen::VectorXd bVrepSquare, bHrepSquare;
+
+    Eigen::MatrixXd vertices2D, AHrepVertices2D;
+    Eigen::VectorXd bHrepVertices2D;
 };
 
 BOOST_FIXTURE_TEST_CASE(Vrep2Hrep, Rep)
@@ -124,18 +153,15 @@ BOOST_FIXTURE_TEST_CASE(setVertices, Rep)
 BOOST_FIXTURE_TEST_CASE(setVertices2D, Rep)
 {
     auto t_start = std::chrono::high_resolution_clock::now();
-    Eigen::MatrixXd vertices{8, 2};
-    vertices <<
-      1.07251350992533,   0.175746163122458,
-      1.07251350992533,   0.0457461631224578,
-      0.848513509925328,  0.0457461631224578,
-      0.848513509925328,  0.175746163122458,
-      1.07251394042948,  -0.0443321701680914,
-      1.07251394042948,  -0.174332170168091,
-      0.848513940429476, -0.174332170168091,
-      0.848513940429476, -0.0443321701680914;
     Eigen::Polyhedron poly;
-    BOOST_REQUIRE_THROW(poly.setVertices(vertices), std::runtime_error);
+    poly.setVertices(vertices2D);
+    auto hrep = poly.hrep();
+    BOOST_CHECK(AHrepVertices2D.isApprox(hrep.first, 1e-5));
+    BOOST_CHECK(bHrepVertices2D.isApprox(hrep.second, 1e-5));
     auto t_end = std::chrono::high_resolution_clock::now();
     std::cout << "Wall time: " << std::chrono::duration<double, std::milli>(t_end - t_start).count() << "ms" << std::endl;
+
+    std::cout << (AHrepVertices2D - hrep.first).norm() << std::endl;
+    std::cout << (bHrepVertices2D - hrep.second).norm() << std::endl;
+    poly.printHrep();
 }

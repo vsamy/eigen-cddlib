@@ -22,8 +22,13 @@
 #include <chrono>
 #include <iostream>
 #include <utility>
+#include <string>
 
 #include "Polyhedron.h"
+
+namespace {
+    constexpr char DD_NO_ERROR_STRING[] = "*No Error found.\n";
+}
 
 struct Rep {
     Rep()
@@ -101,6 +106,7 @@ BOOST_FIXTURE_TEST_CASE(Vrep2Hrep, Rep)
     bool success = poly.setVrep(AVrepCone, bVrepCone);
     auto hrep = poly.hrep();
     BOOST_CHECK(success);
+    BOOST_CHECK(poly.lastErrorMessage() == DD_NO_ERROR_STRING);
     BOOST_CHECK(AHrepCone.isApprox(hrep.first));
     BOOST_CHECK(bHrepCone.isApprox(hrep.second));
     auto t_end = std::chrono::high_resolution_clock::now();
@@ -116,6 +122,7 @@ BOOST_FIXTURE_TEST_CASE(Hrep2Vrep, Rep)
     bool success = poly.setHrep(AHrepCone, bHrepCone);
     auto vrep = poly.vrep();
     BOOST_CHECK(success);
+    BOOST_CHECK(poly.lastErrorMessage() == DD_NO_ERROR_STRING);
     BOOST_CHECK(AVrepCone.isApprox(vrep.first));
     BOOST_CHECK(bVrepCone.isApprox(vrep.second));
     auto t_end = std::chrono::high_resolution_clock::now();
@@ -131,6 +138,7 @@ BOOST_FIXTURE_TEST_CASE(setRays, Rep)
     bool success = poly.setRays(AVrepCone);
     auto hrep = poly.hrep();
     BOOST_CHECK(success);
+    BOOST_CHECK(poly.lastErrorMessage() == DD_NO_ERROR_STRING);
     BOOST_CHECK(AHrepCone.isApprox(hrep.first));
     BOOST_CHECK(bHrepCone.isApprox(hrep.second));
     auto t_end = std::chrono::high_resolution_clock::now();
@@ -146,6 +154,7 @@ BOOST_FIXTURE_TEST_CASE(setVertices, Rep)
     bool success = poly.setVertices(AVrepSquare);
     auto hrep = poly.hrep();
     BOOST_CHECK(success);
+    BOOST_CHECK(poly.lastErrorMessage() == DD_NO_ERROR_STRING);
     BOOST_CHECK(AHrepSquare.isApprox(hrep.first));
     BOOST_CHECK(bHrepSquare.isApprox(hrep.second));
     auto t_end = std::chrono::high_resolution_clock::now();
@@ -161,6 +170,7 @@ BOOST_FIXTURE_TEST_CASE(setVertices2D, Rep)
     bool success = poly.setVertices(vertices2D);
     auto hrep = poly.hrep();
     BOOST_CHECK(success);
+    BOOST_CHECK(poly.lastErrorMessage() == DD_NO_ERROR_STRING);
     BOOST_CHECK(AHrepVertices2D.isApprox(hrep.first, 1e-5));
     BOOST_CHECK(bHrepVertices2D.isApprox(hrep.second, 1e-5));
     auto t_end = std::chrono::high_resolution_clock::now();

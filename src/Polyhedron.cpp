@@ -17,6 +17,8 @@
 
 #include "Polyhedron.h"
 
+#include <fstream>
+
 namespace Eigen {
 
 std::atomic_int Polyhedron::counter(0);
@@ -153,49 +155,20 @@ std::pair<Eigen::MatrixXd, Eigen::VectorXd> Polyhedron::ddfMatrix2EigenMatrix(co
     return std::make_pair(mOut, vOut);
 }
 
-std::string Polyhedron::stringFromError(dd_ErrorType err)
+std::string Polyhedron::lastErrorMessage()
 {
-  switch (err)
-  {
-    case dd_CannotHandleLinearity:
-      return "dd_CannotHandleLinearity";
-    case dd_ColIndexOutOfRange:
-      return "dd_ColIndexOutOfRange";
-    case dd_DimensionTooLarge:
-      return "dd_DimensionTooLarge";
-    case dd_EmptyHrepresentation:
-      return "dd_EmptyHrepresentation";
-    case dd_EmptyRepresentation:
-      return "dd_EmptyRepresentation";
-    case dd_EmptyVrepresentation:
-      return "dd_EmptyVrepresentation";
-    case dd_IFileNotFound:
-      return "dd_IFileNotFound";
-    case dd_ImproperInputFormat:
-      return "dd_ImproperInputFormat";
-    case dd_LPCycling:
-      return "dd_LPCycling";
-    case dd_NegativeMatrixSize:
-      return "dd_NegativeMatrixSize";
-    case dd_NoError:
-      return "dd_NoError";
-    case dd_NoLPObjective:
-      return "dd_NoLPObjective";
-    case dd_NoRealNumberSupport:
-      return "dd_NoRealNumberSupport";
-    case dd_NotAvailForH:
-      return "dd_NotAvailForH";
-    case dd_NotAvailForV:
-      return "dd_NotAvailForV";
-    case dd_NumericallyInconsistent:
-      return "dd_NumericallyInconsistent";
-    case dd_OFileNotOpen:
-      return "dd_OFileNotOpen";
-    case dd_RowIndexOutOfRange:
-      return "dd_RowIndexOutOfRange";
-    default:
-      return "undefined error";
-  }
+    constexpr char TMP_FPATH[] = "/tmp/dd_lastErrorMessage";
+    FILE * tmpFile = fopen(TMP_FPATH, "w");
+    if (!tmpFile)
+    {
+        return "Cannot get last error message: unable to write temporary file in /tmp";
+    }
+    dd_WriteErrorMessages(tmpFile, err_);
+    fclose(tmpFile);
+    std::ifstream fileStream(TMP_FPATH);
+    std::stringstream buffer;
+    buffer << fileStream.rdbuf();
+    return buffer.str();
 }
 
 } // namespace Eigen

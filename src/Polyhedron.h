@@ -85,6 +85,10 @@ public:
      * \return true if the conversion was successful.
      */
     bool setVertices(const Eigen::MatrixXd& V);
+    /* Get a readable error message for the last conversion error.
+     * \return String for last error message.
+     */
+    std::string lastErrorMessage();
 
 private:
     bool hvrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b, bool isFromGenerators);
@@ -92,7 +96,6 @@ private:
     bool doubleDescription(const Eigen::MatrixXd& matrix, bool isFromGenerators);
     Eigen::MatrixXd concatenateMatrix(const Eigen::MatrixXd& A, const Eigen::VectorXd& b, bool isFromGenerators);
     std::pair<Eigen::MatrixXd, Eigen::VectorXd> ddfMatrix2EigenMatrix(const dd_MatrixPtr mat, bool isOuputVRep) const;
-    std::string stringFromError(dd_ErrorType err);
 
 private:
     dd_MatrixPtr matPtr_;

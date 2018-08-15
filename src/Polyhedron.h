@@ -45,16 +45,18 @@ public:
      * An H-polyhedron is such that \f$ Ax \leq b \f$.
      * \param A Matrix part of the H-representation.
      * \param b Vector part of the H-representation.
+     * \return true if the conversion was successful.
      */
-    void setHrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b);
+    bool setHrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b);
     /* Treat the inputs as a V-representation and compute its H-representation.
      * V-polyhedron is such that \f$ A = [v r]^T, b=[1^T 0^T]^T \f$
      * with A composed of \f$ v \f$, the vertices, \f$ r \f$, the rays,
      * and b is a corresponding vector with 1 for vertices and 0 for rays.
      * \param A Matrix part of the V-representation.
      * \param b Vector part of the V-representation.
+     * \return true if the conversion was successful.
      */
-    void setVrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b);
+    bool setVrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b);
     /* Get the V-representation of the polyhedron.
      * V-polyhedron is such that \f$ A = [v r]^T, b=[1^T 0^T]^T \f$
      * with A composed of \f$ v \f$, the vertices, \f$ r \f$, the rays,
@@ -75,12 +77,14 @@ public:
 
     /* Set the polyhedron from a matrix \f$ R = [r]^T$ of stacked ray vectors.
      * \param R m x n matrix of stacked rays (each ray has dimension n).
+     * \return true if the conversion was successful.
      */
-    void setRays(const Eigen::MatrixXd& R);
+    bool setRays(const Eigen::MatrixXd& R);
     /* Set the polyhedron from a matrix \f$ V = [v]^T$ of stacked vertices.
      * \param V m x n matrix of stacked vertices (each vertex has dimension n).
+     * \return true if the conversion was successful.
      */
-    void setVertices(const Eigen::MatrixXd& V);
+    bool setVertices(const Eigen::MatrixXd& V);
 
 private:
     bool hvrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b, bool isFromGenerators);

@@ -44,18 +44,16 @@ Polyhedron::~Polyhedron()
         dd_free_global_constants();
 }
 
-void Polyhedron::setHrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b)
+bool Polyhedron::setHrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b)
 {
     std::unique_lock<std::mutex> lock(mtx);
-    if (!hvrep(A, b, false))
-        throw std::runtime_error("H-rep to V-rep conversion failed: " + stringFromError(err_));
+    return hvrep(A, b, false);
 }
 
-void Polyhedron::setVrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b)
+bool Polyhedron::setVrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b)
 {
     std::unique_lock<std::mutex> lock(mtx);
-    if (!hvrep(A, b, true))
-        throw std::runtime_error("V-rep to H-rep conversion failed: " + stringFromError(err_));
+    return hvrep(A, b, true);
 }
 
 std::pair<Eigen::MatrixXd, Eigen::VectorXd> Polyhedron::vrep() const
@@ -86,14 +84,14 @@ void Polyhedron::printHrep() const
     dd_WriteMatrix(stdout, mat);
 }
 
-void Polyhedron::setRays(const Eigen::MatrixXd& R)
+bool Polyhedron::setRays(const Eigen::MatrixXd& R)
 {
-    setVrep(R, Eigen::VectorXd::Zero(R.rows()));
+    return setVrep(R, Eigen::VectorXd::Zero(R.rows()));
 }
 
-void Polyhedron::setVertices(const Eigen::MatrixXd& V)
+bool Polyhedron::setVertices(const Eigen::MatrixXd& V)
 {
-    setVrep(V, Eigen::VectorXd::Ones(V.rows()));
+    return setVrep(V, Eigen::VectorXd::Ones(V.rows()));
 }
 
 /**

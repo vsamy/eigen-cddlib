@@ -1,7 +1,0 @@
-/usr/local/include/eigen/cddlib/config.hh
-/usr/local/include/eigen/cddlib/deprecated.hh
-/usr/local/include/eigen/cddlib/warning.hh
-/usr/local/lib/pkgconfig/eigen-cddlib.pc
-/usr/local/include/eigen-cddlib/Polyhedron.h
-/usr/local/include/eigen-cddlib/typedefs.h
-/usr/local/lib/libeigen-cddlib.so

@@ -1,1 +1,0 @@
-/usr/bin/c++  -fPIC -Werror  -pedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat -Wwrite-strings -Wconversion  -std=c++0x -Wall -Wextra -pedantic -O3 -DNDEBUG  -shared -Wl,-soname,libeigen-cddlib.so -o libeigen-cddlib.so CMakeFiles/eigen-cddlib.dir/Polyhedron.cpp.o -lcdd 

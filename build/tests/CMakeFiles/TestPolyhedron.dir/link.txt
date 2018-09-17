@@ -1,1 +1,0 @@
-/usr/bin/c++   -Werror  -pedantic -Wno-long-long -Wall -Wextra -Wcast-align -Wcast-qual -Wformat -Wwrite-strings -Wconversion  -std=c++0x -Wall -Wextra -pedantic -O3 -DNDEBUG   CMakeFiles/TestPolyhedron.dir/TestPolyhedron.cpp.o  -o TestPolyhedron -rdynamic -lboost_unit_test_framework ../src/libeigen-cddlib.so -lcdd -Wl,-rpath,/home/philip/eigen-cddlib/build/src 

@@ -152,6 +152,7 @@ std::pair<Eigen::MatrixXd, Eigen::VectorXd> Polyhedron::ddfMatrix2EigenMatrix(co
             mOut(row, col - 1) = sign * mat->matrix[row][col][0];
     }
 
+    dd_FreeMatrix(mat);    
     return std::make_pair(mOut, vOut);
 }
 

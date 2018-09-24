@@ -84,7 +84,7 @@ public:
 
 private:
     bool hvrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b, bool isFromGenerators);
-    void initializeMatrixPtr(Eigen::Matrix<int, 1, 1>::Index rows, Eigen::Matrix<int, 1, 1>::Index  cols, bool isFromGenerators);
+    void initializeMatrixPtr(Eigen::Index rows, Eigen::Index cols, bool isFromGenerators);
     bool doubleDescription(const Eigen::MatrixXd& matrix, bool isFromGenerators);
     Eigen::MatrixXd concatenateMatrix(const Eigen::MatrixXd& A, const Eigen::VectorXd& b, bool isFromGenerators);
     std::pair<Eigen::MatrixXd, Eigen::VectorXd> ddfMatrix2EigenMatrix(const dd_MatrixPtr mat, bool isOuputVRep) const;
@@ -100,3 +100,4 @@ private:
 };
 
 } // namespace Eigen
+

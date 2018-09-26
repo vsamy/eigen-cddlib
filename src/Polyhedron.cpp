@@ -157,18 +157,21 @@ std::pair<Eigen::MatrixXd, Eigen::VectorXd> Polyhedron::ddfMatrix2EigenMatrix(co
 
 std::string Polyhedron::lastErrorMessage()
 {
-    constexpr char TMP_FPATH[] = "/tmp/dd_lastErrorMessage";
-    FILE * tmpFile = fopen(TMP_FPATH, "w");
-    if (!tmpFile)
+    FILE * tmpFile = tmpfile();
+    if (fseek(tmpFile, 0, SEEK_SET) != 0)
     {
-        return "Cannot get last error message: unable to write temporary file in /tmp";
+        return "Cannot get error message: unable to create temporary binary file";
     }
     dd_WriteErrorMessages(tmpFile, err_);
+    fseek(tmpFile, 0, SEEK_END);
+    long length = ftell(tmpFile);
+    fseek(tmpFile, 0, SEEK_SET);
+    char * buffer = new char[length];
+    size_t nChar = fread(buffer, sizeof(char), length, tmpFile);
+    std::string errorMessage(buffer, nChar);
+    delete[] buffer;
     fclose(tmpFile);
-    std::ifstream fileStream(TMP_FPATH);
-    std::stringstream buffer;
-    buffer << fileStream.rdbuf();
-    return buffer.str();
+    return errorMessage;
 }
 
 } // namespace Eigen

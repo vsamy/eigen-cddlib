@@ -17,6 +17,8 @@
 
 #include "Polyhedron.h"
 
+#include <fstream>
+
 namespace Eigen {
 
 std::atomic_int Polyhedron::counter(0);
@@ -44,18 +46,16 @@ Polyhedron::~Polyhedron()
         dd_free_global_constants();
 }
 
-void Polyhedron::setHrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b)
+bool Polyhedron::setHrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b)
 {
     std::unique_lock<std::mutex> lock(mtx);
-    if (!hvrep(A, b, false))
-        throw std::runtime_error("Bad conversion from hrep to vrep.");
+    return hvrep(A, b, false);
 }
 
-void Polyhedron::setVrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b)
+bool Polyhedron::setVrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b)
 {
     std::unique_lock<std::mutex> lock(mtx);
-    if (!hvrep(A, b, true))
-        throw std::runtime_error("Bad conversion from vrep to hrep.");
+    return hvrep(A, b, true);
 }
 
 std::pair<Eigen::MatrixXd, Eigen::VectorXd> Polyhedron::vrep() const
@@ -86,14 +86,14 @@ void Polyhedron::printHrep() const
     dd_WriteMatrix(stdout, mat);
 }
 
-void Polyhedron::setRays(const Eigen::MatrixXd& R)
+bool Polyhedron::setRays(const Eigen::MatrixXd& R)
 {
-    setVrep(R, Eigen::VectorXd::Zero(R.rows()));
+    return setVrep(R, Eigen::VectorXd::Zero(R.rows()));
 }
 
-void Polyhedron::setVertices(const Eigen::MatrixXd& V)
+bool Polyhedron::setVertices(const Eigen::MatrixXd& V)
 {
-    setVrep(V, Eigen::VectorXd::Ones(V.rows()));
+    return setVrep(V, Eigen::VectorXd::Ones(V.rows()));
 }
 
 /**
@@ -154,6 +154,25 @@ std::pair<Eigen::MatrixXd, Eigen::VectorXd> Polyhedron::ddfMatrix2EigenMatrix(co
 
     dd_FreeMatrix(mat);    
     return std::make_pair(mOut, vOut);
+}
+
+std::string Polyhedron::lastErrorMessage()
+{
+    FILE * tmpFile = tmpfile();
+    if (fseek(tmpFile, 0, SEEK_SET) != 0)
+    {
+        return "Cannot get error message: unable to create temporary binary file";
+    }
+    dd_WriteErrorMessages(tmpFile, err_);
+    fseek(tmpFile, 0, SEEK_END);
+    long length = ftell(tmpFile);
+    fseek(tmpFile, 0, SEEK_SET);
+    char * buffer = new char[length];
+    size_t nChar = fread(buffer, sizeof(char), length, tmpFile);
+    std::string errorMessage(buffer, nChar);
+    delete[] buffer;
+    fclose(tmpFile);
+    return errorMessage;
 }
 
 } // namespace Eigen

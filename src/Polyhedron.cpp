@@ -48,40 +48,40 @@ Polyhedron::~Polyhedron()
 
 bool Polyhedron::setHrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b)
 {
-    std::unique_lock<std::mutex> lock(mtx);
+    std::lock_guard<std::mutex> lock(mtx);
     return hvrep(A, b, false);
 }
 
 bool Polyhedron::setVrep(const Eigen::MatrixXd& A, const Eigen::VectorXd& b)
 {
-    std::unique_lock<std::mutex> lock(mtx);
+    std::lock_guard<std::mutex> lock(mtx);
     return hvrep(A, b, true);
 }
 
 std::pair<Eigen::MatrixXd, Eigen::VectorXd> Polyhedron::vrep() const
 {
-    std::unique_lock<std::mutex> lock(mtx);
+    std::lock_guard<std::mutex> lock(mtx);
     dd_MatrixPtr mat = dd_CopyGenerators(polytope_);
     return ddfMatrix2EigenMatrix(mat, true);
 }
 
 std::pair<Eigen::MatrixXd, Eigen::VectorXd> Polyhedron::hrep() const
 {
-    std::unique_lock<std::mutex> lock(mtx);
+    std::lock_guard<std::mutex> lock(mtx);
     dd_MatrixPtr mat = dd_CopyInequalities(polytope_);
     return ddfMatrix2EigenMatrix(mat, false);
 }
 
 void Polyhedron::printVrep() const
 {
-    std::unique_lock<std::mutex> lock(mtx);
+    std::lock_guard<std::mutex> lock(mtx);
     dd_MatrixPtr mat = dd_CopyGenerators(polytope_);
     dd_WriteMatrix(stdout, mat);
 }
 
 void Polyhedron::printHrep() const
 {
-    std::unique_lock<std::mutex> lock(mtx);
+    std::lock_guard<std::mutex> lock(mtx);
     dd_MatrixPtr mat = dd_CopyInequalities(polytope_);
     dd_WriteMatrix(stdout, mat);
 }
@@ -110,8 +110,8 @@ void Polyhedron::initializeMatrixPtr(Eigen::Index rows, Eigen::Index cols, bool 
 {
     if (matPtr_ != nullptr)
         dd_FreeMatrix(matPtr_);
-    
-    matPtr_ = dd_CreateMatrix(rows, cols);
+
+    matPtr_ = dd_CreateMatrix(static_cast<dd_rowrange>(rows), static_cast<dd_colrange>(cols));
     matPtr_->representation = (isFromGenerators ? dd_Generator : dd_Inequality);
 }
 
@@ -152,22 +152,21 @@ std::pair<Eigen::MatrixXd, Eigen::VectorXd> Polyhedron::ddfMatrix2EigenMatrix(co
             mOut(row, col - 1) = sign * mat->matrix[row][col][0];
     }
 
-    dd_FreeMatrix(mat);    
+    dd_FreeMatrix(mat);
     return std::make_pair(mOut, vOut);
 }
 
 std::string Polyhedron::lastErrorMessage()
 {
-    FILE * tmpFile = tmpfile();
-    if (fseek(tmpFile, 0, SEEK_SET) != 0)
-    {
+    FILE* tmpFile = tmpfile();
+    if (fseek(tmpFile, 0, SEEK_SET) != 0) {
         return "Cannot get error message: unable to create temporary binary file";
     }
     dd_WriteErrorMessages(tmpFile, err_);
     fseek(tmpFile, 0, SEEK_END);
     long length = ftell(tmpFile);
     fseek(tmpFile, 0, SEEK_SET);
-    char * buffer = new char[length];
+    char* buffer = new char[length];
     size_t nChar = fread(buffer, sizeof(char), length, tmpFile);
     std::string errorMessage(buffer, nChar);
     delete[] buffer;

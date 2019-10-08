@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include "api.h"
 #include "typedefs.h"
 #include <Eigen/Core>
 #include <atomic>
@@ -27,14 +28,14 @@
 
 namespace Eigen {
 
-  using HrepXd = std::pair<Eigen::MatrixXd, Eigen::VectorXd>;
-  using VrepXd = std::pair<Eigen::MatrixXd, Eigen::VectorXd>;
+using HrepXd = std::pair<Eigen::MatrixXd, Eigen::VectorXd>;
+using VrepXd = std::pair<Eigen::MatrixXd, Eigen::VectorXd>;
 
 /* Wrapper of Convex Polyhedron
  * This class aims to translate eigen matrix into cddlib matrix.
  * It automatically transforms a v-polyhedron into an h-polyhedron and vice-versa.
  */
-class Polyhedron {
+class EIGEN_CDDLIB_DLLAPI Polyhedron {
 public:
     /* Default constructor that set cdd global constants. */
     Polyhedron();

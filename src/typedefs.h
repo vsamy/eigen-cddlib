@@ -21,7 +21,7 @@
 namespace Eigen {
 
 #ifdef EIGEN_3_2_FOUND
-    using Index = Eigen::Matrix<int, 1, 1>::Index;
+using Index = Eigen::Matrix<int, 1, 1>::Index;
 #endif
 
-}
+} // namespace Eigen

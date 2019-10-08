@@ -1,6 +1,7 @@
 # eigen-cddlib
 
 Eigen wrapper for Komei Fukuda's [cdd](https://www.inf.ethz.ch/personal/fukudak/cdd_home/) library.
+For a cmake install, you can use the forked [repo](https://github.com/vsamy/cddlib)
 
 ## Installing
 

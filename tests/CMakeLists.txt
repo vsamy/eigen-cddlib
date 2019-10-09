@@ -1,5 +1,17 @@
 enable_testing()
 
+if(${BUILD_TEST_STATIC_BOOST})
+    set(Boost_USE_STATIC_LIBS ON)
+    set(BUILD_SHARED_LIBS OFF)
+    set(BOOST_DEFS "")
+    set(BUILD_TYPE STATIC)
+else()
+    set(Boost_USE_STATIC_LIBS OFF)
+    set(BUILD_SHARED_LIBS ON)
+    set(BOOST_DEFS Boost::dynamic_linking)
+    set(BUILD_TYPE SHARED)
+endif()
+set(Boost_USE_STATIC_RUNTIME OFF)
 find_package(Boost REQUIRED COMPONENTS unit_test_framework)
 
 add_executable(TestPolyhedron TestPolyhedron.cpp)

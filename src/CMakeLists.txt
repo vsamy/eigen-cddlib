@@ -1,5 +1,5 @@
 set(SOURCES Polyhedron.cpp)
-set(HEADERS Polyhedron.h typedefs.h)
+set(HEADERS Polyhedron.h typedefs.h api.h)
 
 add_library(${PROJECT_NAME} SHARED ${SOURCES} ${HEADERS})
 target_include_directories(${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}> $<INSTALL_INTERFACE:include>)

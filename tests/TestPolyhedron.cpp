@@ -16,9 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 
 #define BOOST_TEST_MODULE TestPolyhedron
-#include <Eigen/Core>
-#include <boost/test/tools/floating_point_comparison.hpp>
 #include <boost/test/unit_test.hpp>
+#include <Eigen/Core>
 #include <chrono>
 #include <iostream>
 #include <utility>

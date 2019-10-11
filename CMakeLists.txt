@@ -9,6 +9,7 @@ set(PROJECT_DEBUG_POSTFIX "_d")
 set(INSTALL_GENERATED_HEADERS OFF CACHE BOOL "Generate and install standard headers")
 
 set(DOXYGEN_USE_MATHJAX "YES")
+set(CMAKE_CXX_STANDARD 11)
 
 option(BUILD_TESTING "Build unit tests." ON)
 option(BUILD_TEST_STATIC_BOOST "Build unit tests with static boost libraries" OFF)

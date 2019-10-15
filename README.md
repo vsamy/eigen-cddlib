@@ -5,7 +5,7 @@ For a cmake install, you can use the forked [repo](https://github.com/vsamy/cddl
 
 ## Installing
 
-First install ``cddlib``:
+First install ``cddlib`` whether by installing [this (prefer way)](https://github.com/vsamy/cddlib) or with:
 ```sh
 sudo apt-get install libcdd-dev
 ```
@@ -21,7 +21,7 @@ make -j4
 make install
 ```
 
-If cdd has not been installed in the default path, CMake may not find it. In this case, add the path as a HINTS in ``find_path`` and/or ``find_library``.
+If cdd has not been installed in the default path, CMake may not find it. In this case, add the path as a HINTS in ``find_package``.
 
 ### Testing
 
